@@ -13,8 +13,10 @@ def home():
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
+    print("Received a request at /webhook")  # לוג קבלת בקשה
     try:
         data = request.json  # מקבל הודעה מגוגל צ'אט
+        print(f"Data received: {data}")  # הדפס את הנתונים שהתקבלו
         if not data or "message" not in data or "text" not in data["message"]:
             return jsonify({"text": "לא התקבלה הודעה תקינה."})
 
@@ -24,6 +26,7 @@ def webhook():
         return jsonify({"text": ai_response})  # שליחת תשובה חזרה לצ'אט
 
     except Exception as e:
+        print(f"Error: {str(e)}")  # הדפס שגיאות
         return jsonify({"text": f"שגיאה: {str(e)}"})
 
 def get_ai_response(message):
@@ -42,6 +45,7 @@ def get_ai_response(message):
     if response.status_code == 200:
         return response.json()["choices"][0]["message"]["content"]
     else:
+        print(f"Error: {response.status_code} - {response.text}")  # הוספת הדפסת שגיאות
         return "שגיאה בקבלת תשובה מהבינה המלאכותית."
 
 if __name__ == '__main__':
